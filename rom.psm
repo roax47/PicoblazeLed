@@ -1,0 +1,103 @@
+start: LOAD s1,00
+LOAD s4, 00
+LOAD s5, 00
+LOAD s6, 00
+LOAD s7, 00
+LOAD s8, 01 	
+OUTPUT s1,0B		
+ENABLE INTERRUPT	
+loop: JUMP loop		
+
+int: INPUT s2, 0A
+COMPARE s8, 01
+JUMP Z, load1
+COMPARE s8, 02
+JUMP Z, load2
+COMPARE s8, 03
+JUMP Z, load3
+COMPARE s8, 04
+JUMP Z, load4
+	
+check_operation:COMPARE s2, 01		
+JUMP Z,increment
+COMPARE s2, 02
+JUMP Z, decrement
+COMPARE s2, 03
+JUMP Z, right
+COMPARE s2, 04
+JUMP Z, left
+
+load1:
+LOAD s1,s4
+JUMP check_operation
+
+load2:
+LOAD s1,s5
+JUMP check_operation
+
+load3:
+LOAD s1,s6
+JUMP check_operation
+
+load4:
+LOAD s1,s7
+JUMP check_operation
+
+
+left: ADD s8, 01
+COMPARE s8, 05
+JUMP NZ, end
+LOAD s8, 01
+JUMP end
+
+
+right: SUB s8, 01
+COMPARE s8, 00
+JUMP NZ, end
+LOAD s8, 04
+JUMP end
+
+decrement: SUB s1,01
+COMPARE s1,FF
+JUMP NZ, int_end_store
+LOAD s1, 0F
+JUMP int_end_store
+
+increment: ADD s1,01
+COMPARE s1, 10
+JUMP NZ, int_end_store
+LOAD s1, 00		
+JUMP int_end_store
+
+int_end_store: 
+COMPARE s8, 01
+JUMP Z, store1
+COMPARE s8, 02
+JUMP Z, store2
+COMPARE s8, 03
+JUMP Z, store3
+COMPARE s8, 04
+JUMP Z, store4JUMP end
+
+store1:
+LOAD s4,s1
+JUMP end
+
+store2:
+LOAD s5,s1
+JUMP end
+
+store3:
+LOAD s6,s1
+JUMP end
+
+store4:
+LOAD s7,s1
+JUMP end
+
+
+end:
+OUTPUT s1,0B
+RETURNI ENABLE
+ADDRESS 3FF 
+JUMP int
